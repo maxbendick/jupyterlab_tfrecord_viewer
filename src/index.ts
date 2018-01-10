@@ -5,10 +5,15 @@ import {
 import { ICommandPalette } from '@jupyterlab/apputils'
 import '../style/index.css'
 
+import * as React from 'react'
+import * as ReactDom from 'react-dom'
+
 import {
   // KernelMessage,
   Kernel,
 } from '@jupyterlab/services'
+
+import Component from './component'
 
 /**
  * Thoughts on flow:
@@ -39,11 +44,13 @@ try:
     for str_record in record_iterator:
         example = tf.train.Example()
         example.ParseFromString(str_record)
-        features = str(example.features)
-        # features = MessageToJson(example.features)
+        # features = str(example.features)
+        features = MessageToJson(example.features)
         all_features.append(features)
 
-    print("\\n".join(all_features))
+    print('[')
+    print(",\\n".join(all_features))
+    print(']')
 
 except:
     print('Failed to read record')
@@ -69,15 +76,26 @@ const activate = (app: JupyterLab, palette: ICommandPalette) => {
   widget.title.label = 'TFRecord'
   widget.title.closable = true
 
-  let p = document.createElement('p')
-  p.style.cssText = "white-space: pre-wrap;"
-  widget.node.appendChild(p)
-  p.innerHTML = 'Loading Tensorflow Dataset'
+  let textInput = document.createElement('input')
+  textInput.value = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record'
+  textInput.style.cssText = 'width: calc(100% - 70px);'
+  widget.node.appendChild(textInput)
+
+  let button = document.createElement('button')
+  button.style.cssText = 'width: 60px;'
+  button.innerHTML = 'Load'
+  button.onclick = _mouseEvent => console.log('button clicked', textInput.value)
+  widget.node.appendChild(button)
+
+  let reactContent = document.createElement('div')
+  widget.node.appendChild(reactContent)
+
 
   runReader(res => {
     // want to clean out all the binary
     const cleaned = res.replace(/b\'(.|\n)*\'/g, '{binary...}')
-    p.innerHTML = cleaned
+    
+    ReactDom.render(React.createElement(Component, {data: cleaned}), reactContent)
   })
 
   const command = 'jupyterlab_tfrecord_viewer:open'
@@ -105,28 +123,3 @@ const extension: JupyterLabPlugin<void> = {
 }
 
 export default extension
-
-
-// let img = document.createElement('img')
-// widget.node.appendChild(img)
-
-//  b\'(.|\n)*\'
-    // let cleaned = []
-    // let sawB = false
-    // for (let i = 0; i < res.length; i++) {
-    //   let c = res[i]
-    //   let prev = i === 0 ? 'a' : res[i-1]
-      
-    //   if (c === 'b')
-    //     sawB = true
-    //   else
-    //     sawB = false
-    // }
-
-// fetch('https:////egszlpbmle.execute-api.us-east-1.amazonaws.com/prod').then(response => {
-  //   return response.json()
-  // }).then(data => {
-  //   img.src = data.img
-  //   img.alt = data.title
-  //   img.title = data.alt
-  // })
