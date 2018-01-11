@@ -12,6 +12,8 @@ const activate = (app: JupyterLab, palette: ICommandPalette) => {
   console.log('Extension jupyterlab_tfrecord_viewer is activated!')
   console.log('ICommandPalette:', palette)
 
+  // DOM manipulation
+
   let widget: Widget = new Widget()
   widget.id = 'jupyterlab_tfrecord_viewer'
   widget.title.label = 'TFRecord'
@@ -23,6 +25,8 @@ const activate = (app: JupyterLab, palette: ICommandPalette) => {
 
   ReactDom.render(React.createElement(Component, {/*props*/}), reactContent)
 
+
+  // Command palette
 
   const command = 'jupyterlab_tfrecord_viewer:open'
   app.commands.addCommand(command, {

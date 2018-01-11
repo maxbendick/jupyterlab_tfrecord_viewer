@@ -45,30 +45,40 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
   render() {
 
     const { data } = this.state
-    const parsedData = JSON.parse(data)
+    let parsedData
+    let failure: boolean
+    try {
+      parsedData = JSON.parse(data)
+      failure = false
+    }
+    catch(e) {
+      failure = true
+    }
+
 
     return (
       <div>
 
-        <hr/>
-        <input
-          style={{width: '50%'}} 
-          type="text" 
-          value={this.state.path}
-          onChange={this.handlePathChange} />
-
-        <button 
-          onClick={this.onRequestLoad}>
-          WHELP
-          </button>
-        
-        <br/>
+        <div style={{display: 'flex'}}>
+          <input
+            style={{flex: '1'}}
+            type="text" 
+            value={this.state.path}
+            onChange={this.handlePathChange} />
+          <button 
+            style={{width: '60px'}}
+            onClick={this.onRequestLoad}>
+            Load
+            </button>
+        </div>
 
         {
           this.state.data
-            ? <JSONTree
-                data={parsedData}
-                />
+            ? failure
+              ? 'Failed to read record'
+              : <JSONTree
+                  data={parsedData}
+                  />
             : 'Loading data...'
         }
         
