@@ -7,7 +7,7 @@ const Component = (props: {data: any}) => {
   const parsedData = JSON.parse(data)
   
   return (
-    <div>
+    <div style={{overflow: 'auto'}}>
       <JSONTree
         data={parsedData}
         />

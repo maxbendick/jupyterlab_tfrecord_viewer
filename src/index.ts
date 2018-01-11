@@ -75,6 +75,7 @@ const activate = (app: JupyterLab, palette: ICommandPalette) => {
   widget.id = 'jupyterlab_tfrecord_viewer'
   widget.title.label = 'TFRecord'
   widget.title.closable = true
+  widget.node.style.cssText = 'overflow: auto;'
 
   let textInput = document.createElement('input')
   textInput.value = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record'
@@ -94,7 +95,7 @@ const activate = (app: JupyterLab, palette: ICommandPalette) => {
   runReader(res => {
     // want to clean out all the binary
     const cleaned = res.replace(/b\'(.|\n)*\'/g, '{binary...}')
-    
+
     ReactDom.render(React.createElement(Component, {data: cleaned}), reactContent)
   })
 
