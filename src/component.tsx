@@ -1,7 +1,8 @@
 import * as React from 'react'
 import JSONTree from 'react-json-tree';
-import { executePython, readAllExamplesPythonCode } from './python'
+import { executePython, readAllExamplesPythonCode, cleanBinary } from './python'
 
+const myPath = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record'
 
 export type TFRecordProps = {
 }
@@ -14,28 +15,30 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
   constructor(props: TFRecordProps) {
     super(props)
     this.state = {
-      path: '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record',
+      path: myPath,
       data: null,
     }
   }
 
   componentDidMount() {
-    executePython(readAllExamplesPythonCode,
+    executePython(readAllExamplesPythonCode(this.state.path),
       res => {
-        // want to clean out all the binary
-        const cleaned = res.replace(/b\'(.|\n)*\'/g, '{binary...}')
-
+        const cleaned = cleanBinary(res)
         this.setState({data: cleaned})
       }
     )
   }
 
   onRequestLoad = () => {
-    console.log('onRequestLoad')
+    executePython(readAllExamplesPythonCode(this.state.path),
+      res => {
+        const cleaned = cleanBinary(res)
+        this.setState({data: cleaned})
+      }
+    )
   }
 
   handlePathChange = (event: any) => {
-    console.log('handlePathChange')
     this.setState({path: event.target.value})
   }
 
@@ -75,15 +78,3 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
 }
 
 export default TFRecordViewerComponent
-
-
-// let textInput = document.createElement('input')
-// textInput.value = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record'
-// textInput.style.cssText = 'width: calc(100% - 70px);'
-// widget.node.appendChild(textInput)
-
-// let button = document.createElement('button')
-// button.style.cssText = 'width: 60px;'
-// button.innerHTML = 'Load'
-// button.onclick = _mouseEvent => console.log('button clicked', textInput.value)
-// widget.node.appendChild(button)

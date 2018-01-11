@@ -18,13 +18,15 @@ export async function executePython(code: string, onResult: (s: string) => any) 
   }
 }
 
+export const cleanBinary = (s: string): string =>
+  s.replace(/b\'(.|\n)*\'/g, '{binary...}')
 
-export const readAllExamplesPythonCode = `
+export const readAllExamplesPythonCode = (path: string) => `
 import tensorflow as tf
 from google.protobuf.json_format import MessageToJson
 
 try:
-    record_path = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record'
+    record_path = '${path}'
 
     record_iterator = tf.python_io.tf_record_iterator(path=record_path)
 
