@@ -6,12 +6,16 @@ const myPath = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.reco
 
 const defaultMaxMemoryInMegabytes = 50
 
+const parseMemory = (m: string): number =>
+  parseFloat(m) || defaultMaxMemoryInMegabytes
+
+
 export type TFRecordProps = {
 }
 export type TFRecordState = {
   path: string
   data: any
-  maxMemory: number
+  maxMemory: string
 }
 export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRecordState> {
 
@@ -20,24 +24,42 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
     this.state = {
       path: myPath,
       data: null,
-      maxMemory: defaultMaxMemoryInMegabytes
+      maxMemory: defaultMaxMemoryInMegabytes.toString()
     }
   }
 
   componentDidMount() {
-    executePython(readAllExamplesPythonCode(this.state.path, this.state.maxMemory),
+
+    const maxMemoryNum: number = parseMemory(this.state.maxMemory)
+    const maxMemory: string = maxMemoryNum.toString()
+    
+    this.setState({ maxMemory })
+
+    executePython(readAllExamplesPythonCode(this.state.path, maxMemoryNum),
       res => {
         const cleaned = cleanBinary(res)
-        this.setState({data: cleaned})
+        this.setState({
+          data: cleaned,
+          maxMemory: parseMemory(this.state.maxMemory).toString(),
+        })
       }
     )
   }
 
   onRequestLoad = () => {
-    executePython(readAllExamplesPythonCode(this.state.path, this.state.maxMemory),
+
+    const maxMemoryNum: number = parseMemory(this.state.maxMemory)
+    const maxMemory: string = maxMemoryNum.toString()
+    
+    this.setState({ maxMemory })
+
+    executePython(readAllExamplesPythonCode(this.state.path, maxMemoryNum),
       res => {
         const cleaned = cleanBinary(res)
-        this.setState({data: cleaned})
+        this.setState({
+          data: cleaned,
+          maxMemory: parseMemory(this.state.maxMemory).toString(),
+        })
       }
     )
   }
@@ -47,7 +69,7 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
   }
 
   handleMaxMemoryChange = (event: any) => {
-    this.setState({maxMemory: parseFloat(event.target.value)})
+    this.setState({maxMemory: event.target.value})
   }
 
   render() {
