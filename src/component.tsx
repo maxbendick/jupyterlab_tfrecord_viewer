@@ -4,7 +4,7 @@ import { executePython, readAllExamplesPythonCode, cleanBinary } from './python'
 
 const myPath = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record'
 
-const defaultMaxMemoryInMegabytes = 50
+const defaultMaxMemoryInMegabytes = 10
 
 const parseMemory = (m: string): number =>
   parseFloat(m) || defaultMaxMemoryInMegabytes
