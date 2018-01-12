@@ -1,5 +1,10 @@
 import { Widget } from '@phosphor/widgets'
 import { JupyterLab, JupyterLabPlugin } from '@jupyterlab/application'
+
+import {
+  IDocumentManager
+} from '@jupyterlab/docmanager';
+
 import { ICommandPalette } from '@jupyterlab/apputils'
 import * as React from 'react'
 import * as ReactDom from 'react-dom'
@@ -8,9 +13,10 @@ import '../style/index.css'
 import Component from './component'
 
 
-const activate = (app: JupyterLab, palette: ICommandPalette) => {
+const activate = (app: JupyterLab, palette: ICommandPalette, documentManager: IDocumentManager) => {
   console.log('Extension jupyterlab_tfrecord_viewer is activated!')
   console.log('ICommandPalette:', palette)
+
 
   // DOM manipulation
 
@@ -48,7 +54,7 @@ const activate = (app: JupyterLab, palette: ICommandPalette) => {
 const extension: JupyterLabPlugin<void> = {
   id: 'jupyterlab_tfrecord_viewer',
   autoStart: true,
-  requires: [ ICommandPalette ],
+  requires: [ ICommandPalette, IDocumentManager ],
   activate,
 }
 

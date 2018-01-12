@@ -21,7 +21,7 @@ export async function executePython(code: string, onResult: (s: string) => any) 
 export const cleanBinary = (s: string): string =>
   s.replace(/b\'(.|\n)*\'/g, '{binary...}')
 
-export const readAllExamplesPythonCode = (path: string) => `
+export const readAllExamplesPythonCode = (path: string, maxMemoryInMegabytes: number) => `
 import tensorflow as tf
 from google.protobuf.json_format import MessageToJson
 
@@ -30,6 +30,8 @@ try:
 
     record_iterator = tf.python_io.tf_record_iterator(path=record_path)
 
+    num_bytes = 0
+
     all_features = []
     for str_record in record_iterator:
         example = tf.train.Example()
@@ -37,6 +39,10 @@ try:
         # features = str(example.features)
         features = MessageToJson(example.features)
         all_features.append(features)
+
+        num_bytes = num_bytes + len(features)
+        if num_bytes > ${maxMemoryInMegabytes * 1000 * 1000}:
+            break
 
     print('[')
     print(",\\n".join(all_features))

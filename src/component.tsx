@@ -4,11 +4,14 @@ import { executePython, readAllExamplesPythonCode, cleanBinary } from './python'
 
 const myPath = '/home/max/projects/jupyterlab_tfrecord_viewer/sample_record.record'
 
+const defaultMaxMemoryInMegabytes = 50
+
 export type TFRecordProps = {
 }
 export type TFRecordState = {
   path: string
   data: any
+  maxMemory: number
 }
 export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRecordState> {
 
@@ -17,11 +20,12 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
     this.state = {
       path: myPath,
       data: null,
+      maxMemory: defaultMaxMemoryInMegabytes
     }
   }
 
   componentDidMount() {
-    executePython(readAllExamplesPythonCode(this.state.path),
+    executePython(readAllExamplesPythonCode(this.state.path, this.state.maxMemory),
       res => {
         const cleaned = cleanBinary(res)
         this.setState({data: cleaned})
@@ -30,7 +34,7 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
   }
 
   onRequestLoad = () => {
-    executePython(readAllExamplesPythonCode(this.state.path),
+    executePython(readAllExamplesPythonCode(this.state.path, this.state.maxMemory),
       res => {
         const cleaned = cleanBinary(res)
         this.setState({data: cleaned})
@@ -40,6 +44,10 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
 
   handlePathChange = (event: any) => {
     this.setState({path: event.target.value})
+  }
+
+  handleMaxMemoryChange = (event: any) => {
+    this.setState({maxMemory: parseFloat(event.target.value)})
   }
 
   render() {
@@ -70,6 +78,15 @@ export class TFRecordViewerComponent extends React.Component<TFRecordProps, TFRe
             onClick={this.onRequestLoad}>
             Load
             </button>
+        </div>
+
+        <div>
+          Max memory (MB)
+          <input
+            style={{flex: '1'}}
+            type="text" 
+            value={this.state.maxMemory}
+            onChange={this.handleMaxMemoryChange} />
         </div>
 
         {
